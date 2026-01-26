@@ -1,0 +1,48 @@
+name: Website Health Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    # Run daily at 8am UTC
+    - cron: '0 8 * * *'
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Build
+        run: go build -o health-checker .
+
+      - name: Run Health Check
+        run: ./health-checker
+
+      - name: Output Report to Job Summary
+        run: |
+          echo "# 🔍 Website Health Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat crawl_report.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawl-report
+          path: crawl_report.md
+          retention-days: 30
