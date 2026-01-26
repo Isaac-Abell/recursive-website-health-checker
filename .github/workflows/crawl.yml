@@ -3,10 +3,9 @@ name: Website Health Check
 on:
   workflow_dispatch:
   push:
-    branches: [main]
   schedule:
     # Run daily at 8am UTC
-    - cron: '0 8 * * *'
+    - cron: '0 8 * * 1'
 
 jobs:
   crawl:
