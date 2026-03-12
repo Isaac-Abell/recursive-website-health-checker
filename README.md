@@ -2,6 +2,8 @@
 
 A concurrent web crawler written in Go that probes websites, extracts links (including from JavaScript-rendered pages), and generates detailed health reports with latency breakdowns and visual dependency graphs.
 
+Sucessor of [this previous project](https://github.com/Isaac-Abell/api-and-website-monitor), replacing static checks with a recursive discovery engine and graph visualization of connected sites.
+
 ## Features
 
 - **Concurrent Crawling**: Worker pool pattern for efficient parallel processing
@@ -151,3 +153,4 @@ This repo includes a workflow (`.github/workflows/crawl.yml`) that:
 - Installs Go and Chrome
 - Executes the health check
 - Outputs the full report to the **GitHub Actions Job Summary**
+
