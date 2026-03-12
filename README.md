@@ -29,10 +29,10 @@ go mod download
 
 ```bash
 # Build
-go build -o health-checker .
+go build -o health-checker.exe .
 
 # Run with defaults
-./health-checker
+./health-checker.exe
 
 # Run with custom URL and worker count
 ./health-checker -url https://example.com -workers 10

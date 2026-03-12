@@ -22,62 +22,15 @@ TODO Roadmap (L3 -> L4 Engineering Goals):
 package main
 
 import (
-	"crypto/tls"
 	"io"
 	"log/slog"
 	"net/http"
-	"net/http/httptrace"
 	"strings"
-	"time"
 )
 
 // Helper to determine if we need the heavy browser
 func isHTML(contentType string) bool {
 	return strings.Contains(strings.ToLower(contentType), "text/html")
-}
-
-func getWithTrace(urlStr string, timeout time.Duration) (*http.Response, Latencies, error) {
-	var l Latencies
-	var dnsStart, tcpStart, tlsStart time.Time
-
-	req, err := http.NewRequest("GET", urlStr, nil)
-	if err != nil {
-		return nil, l, err
-	}
-
-	trace := &httptrace.ClientTrace{
-		DNSStart: func(_ httptrace.DNSStartInfo) { dnsStart = time.Now() },
-		DNSDone:  func(_ httptrace.DNSDoneInfo) { l.DNS = time.Since(dnsStart) },
-
-		ConnectStart: func(_, _ string) { tcpStart = time.Now() },
-		ConnectDone: func(_, _ string, err error) {
-			if err == nil {
-				l.TCP = time.Since(tcpStart)
-			}
-		},
-
-		TLSHandshakeStart: func() { tlsStart = time.Now() },
-		TLSHandshakeDone: func(_ tls.ConnectionState, err error) {
-			if err == nil {
-				l.TLS = time.Since(tlsStart)
-			}
-		},
-	}
-
-	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
-
-	transport := &http.Transport{
-		DisableKeepAlives: true,
-	}
-
-	client := &http.Client{
-		Timeout:   timeout,
-		Transport: transport,
-	}
-
-	resp, err := client.Do(req)
-
-	return resp, l, err
 }
 
 func Scout(urlStr string, depth int) Result {

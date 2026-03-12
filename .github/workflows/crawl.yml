@@ -25,10 +25,10 @@ jobs:
           chrome-version: stable
 
       - name: Build
-        run: go build -o health-checker .
+        run: go build -o health-checker.exe .
 
       - name: Run Health Check
-        run: ./health-checker
+        run: ./health-checker.exe
 
       - name: Output Report to Job Summary
         run: |
